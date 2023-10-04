@@ -1,8 +1,11 @@
 # Lists all private endpoints in a Subscription. Then it checks to verify if the DNS responds to the same address and needs
 # verification.
 #
+# Might require:
 # Install-Module -Name Az -Repository PSGallery -Force  
-# Connect-AzAccount -UseDeviceAuthentication
+# 
+# Perform 
+# Connect-AzAccount before running
 
 # Reference https://learn.microsoft.com/en-us/answers/questions/1265387/is-there-a-way-to-list-all-the-private-dns-zones-l
 
@@ -12,9 +15,6 @@ param (
     [string]$reportName2 = "PrivateDNSZone2.csv",
     [string]$subName = "Connectivity"
 )
-
-#write-output "The SubscriptionID is $subscriptionId"
-#write-output "The Report Name is $reportName1.cvs"
 
 Set-AzContext -SubscriptionId $subscriptionId | Out-Null
 
@@ -84,12 +84,12 @@ foreach ($DNSrecord in $DNSrecords){
     if ($record.RecordType -eq 'A'){
         $temp=$record.FQDN
 
-        #For Windows only
-        #$temp=Resolve-DnsName $info.FQDN -Type A
-        #$dnslookup=$temp.IPAddress
+        For Windows only
+        $temp=Resolve-DnsName $info.FQDN -Type A
+        $dnslookup=$temp.IPAddress
         
         #For Linux only
-        $dnsLookup=dig -t a $info.FQDN | Select-String "IN A" | Select-String -Pattern ";" -NotMatch | ForEach-Object{($_ -split "\s+")[4]}
+        #$dnsLookup=dig -t a $info.FQDN | Select-String "IN A" | Select-String -Pattern ";" -NotMatch | ForEach-Object{($_ -split "\s+")[4]}
         
         if($dnsLookup -eq ""){
             #echo "MISSING: $($info.FQDN) : DNS doesn't show Private Endpoint Address, should be $($DNSrecord.Records)"
