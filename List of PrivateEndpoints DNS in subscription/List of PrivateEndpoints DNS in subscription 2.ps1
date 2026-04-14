@@ -84,12 +84,12 @@ foreach ($DNSrecord in $DNSrecords){
     if ($record.RecordType -eq 'A'){
         $temp=$record.FQDN
 
-        For Windows only
+        #For Windows only
         $temp=Resolve-DnsName $info.FQDN -Type A
         $dnslookup=$temp.IPAddress
         
         #For Linux only
-        #$dnsLookup=dig -t a $info.FQDN | Select-String "IN A" | Select-String -Pattern ";" -NotMatch | ForEach-Object{($_ -split "\s+")[4]}
+        #$dnsLookup = dig +short A $info.FQDN | Where-Object { $_ -match '^\d{1,3}(\.\d{1,3}){3}$' }
         
         if($dnsLookup -eq ""){
             #echo "MISSING: $($info.FQDN) : DNS doesn't show Private Endpoint Address, should be $($DNSrecord.Records)"
